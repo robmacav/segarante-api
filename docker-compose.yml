@@ -1,0 +1,25 @@
+services:
+  db:
+    image: postgres
+    container_name: segarante_db
+    env_file: .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+  api:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: segarante_api
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+
+volumes:
+  pg_data:
