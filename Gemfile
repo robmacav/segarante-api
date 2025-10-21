@@ -9,3 +9,4 @@ gem "solid_queue", "1.2.1"
 gem "solid_cable", "3.0.12"
 gem "bootsnap", "1.18.6", require: false
 gem "thruster", "0.1.16", require: false
+gem "dotenv-rails", "3.1.8"
