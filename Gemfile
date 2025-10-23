@@ -10,3 +10,9 @@ gem "solid_cable", "3.0.12"
 gem "bootsnap", "1.18.6", require: false
 gem "thruster", "0.1.16", require: false
 gem "dotenv-rails", "3.1.8"
+
+group :development, :test do
+  gem "rspec-rails", "8.0.2"
+  gem "factory_bot_rails", "6.5.1"
+  gem "shoulda-matchers", "6.5.0"
+end
