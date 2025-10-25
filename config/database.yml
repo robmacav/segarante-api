@@ -6,18 +6,25 @@ default: &default
 
 development:
   <<: *default
-  database: segarante_api_development
+  host: localhost
+  database: <%= ENV['POSTGRES_DB'] %>
+  username: <%= ENV['POSTGRES_USER'] %>
+  password: <%= ENV['POSTGRES_PASSWORD'] %>
 
 test:
   <<: *default
-  database: segarante_api_test
+  host: <%= ENV['POSTGRES_HOST_TEST'] %>
+  database: <%= ENV['POSTGRES_DB_TEST'] %>
+  username: <%= ENV['POSTGRES_USER_TEST'] %>
+  password: <%= ENV['POSTGRES_PASSWORD_TEST'] %>
 
 production:
   primary: &primary_production
     <<: *default
-    database: segarante_api_production
-    username: segarante_api
-    password: <%= ENV["SEGARANTE_API_DATABASE_PASSWORD"] %>
+    host: <%= ENV['POSTGRES_HOST'] %>
+    database: <%= ENV['POSTGRES_DB'] %>
+    username: <%= ENV['POSTGRES_USER'] %>
+    password: <%= ENV['POSTGRES_PASSWORD'] %>
   cache:
     <<: *primary_production
     database: segarante_api_production_cache

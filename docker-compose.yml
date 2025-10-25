@@ -1,0 +1,35 @@
+version: "2.2"
+
+services:
+  db:
+    image: postgres
+    container_name: segarante_db
+    env_file: .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER_TEST}"]
+      interval: 2s
+      timeout: 1s
+      retries: 10
+    # volumes:
+    #   - pg_data:/var/lib/postgresql/data
+  api:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: segarante_api
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+    depends_on:
+      db:
+        condition: service_healthy
+
+# volumes:
+#   pg_data:

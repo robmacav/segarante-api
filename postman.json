@@ -1,0 +1,207 @@
+{
+	"info": {
+		"_postman_id": "bc613aec-ff4a-47ed-8e5e-b3de798d64f9",
+		"name": "SEGARANTE API - Gestão de Apólices",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "37951080"
+	},
+	"item": [
+		{
+			"name": "Apolices",
+			"item": [
+				{
+					"name": "Criação de apólice",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 201 - Apólice criada com sucesso\", function () {",
+									"  pm.response.to.have.status(201);",
+									"});",
+									"",
+									"let data;",
+									"try {",
+									"  data = pm.response.json();",
+									"  pm.environment.set(\"apolice_id\", data.id);",
+									"  console.log(\"Apólice criada com ID:\", data.id);",
+									"} catch (e) {",
+									"  console.log(\"A resposta não é JSON:\", pm.response.text());",
+									"}",
+									"",
+									"pm.test(\"Corpo contém ID da apólice\", function () {",
+									"  pm.expect(data).to.have.property(\"id\");",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const hoje = new Date();",
+									"const inicio = hoje.toISOString().split('T')[0];",
+									"const fim = new Date(hoje.setFullYear(hoje.getFullYear() + 1)).toISOString().split('T')[0];",
+									"",
+									"pm.environment.set(\"inicio_vigencia\", inicio);",
+									"pm.environment.set(\"fim_vigencia\", fim);",
+									"pm.environment.set(\"importancia_segurada\", 600000);",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/apolices?inicio_vigencia=2025-10-22&fim_vigencia=2026-10-22&importancia_segurada=500000",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"apolices"
+							],
+							"query": [
+								{
+									"key": "inicio_vigencia",
+									"value": "2025-10-22"
+								},
+								{
+									"key": "fim_vigencia",
+									"value": "2026-10-22"
+								},
+								{
+									"key": "importancia_segurada",
+									"value": "500000"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar de apólices",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 200 - Lista de apólices retornada\", function () {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const apolices = pm.response.json();",
+									"pm.expect(Array.isArray(apolices)).to.be.true;",
+									"pm.expect(apolices.length).to.be.greaterThan(0);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/apolices",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"apolices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Histórico de Modificações",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/apolices/:identificador",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"apolices",
+								":identificador"
+							],
+							"variable": [
+								{
+									"key": "identificador",
+									"value": "202510000008",
+									"description": "Identificador da Apólice"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Endosso",
+			"item": [
+				{
+					"name": "Criação de endosso",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/endossos?importancia_segurada=&inicio_vigencia&fim_vigencia&cancelando_endosso_id&apolice_id",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"endossos"
+							],
+							"query": [
+								{
+									"key": "importancia_segurada",
+									"value": "",
+									"description": "Novo valor de Importãncia Segurada (IE)"
+								},
+								{
+									"key": "inicio_vigencia",
+									"value": null,
+									"description": "Novo valor do Inicio da Vigência"
+								},
+								{
+									"key": "fim_vigencia",
+									"value": null,
+									"description": "Novo valor do fim da vigência"
+								},
+								{
+									"key": "cancelando_endosso_id",
+									"value": null,
+									"description": "Identificador do Endosso que será cancelado"
+								},
+								{
+									"key": "apolice_id",
+									"value": null,
+									"description": "Chave Primária da Apólice"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "",
+			"type": "default"
+		}
+	]
+}
