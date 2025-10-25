@@ -1,0 +1,13 @@
+FROM ruby:3.4.2-slim
+
+WORKDIR /app
+
+RUN apt update -qq && apt install -y build-essential libpq-dev nodejs libyaml-dev
+
+COPY Gemfile Gemfile.lock ./
+
+RUN bundle install --jobs `getconf _NPROCESSORS_ONLN` --retry 3
+
+ENV RAILS_ENV=test
+
+CMD ["bash"]
