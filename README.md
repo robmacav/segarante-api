@@ -11,3 +11,8 @@ git clone git@github.com:robmacav/segarante-api.git
 ```bash
 docker-compose up -d
 ```
+
+### Rodando os testes em RSpec via Docker Compose
+```bash
+docker-compose -f docker-compose.test.yml run --rm test
+```
