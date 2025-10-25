@@ -8,7 +8,7 @@ COPY Gemfile Gemfile.lock .
 
 RUN bundle config set without 'development test'
 
-RUN bundle install
+RUN bundle install --jobs `getconf _NPROCESSORS_ONLN` --retry 3
 
 COPY entrypoint.sh /usr/bin/
 
