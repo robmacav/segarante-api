@@ -38,6 +38,15 @@ RSpec.describe Endosso, type: :model do
   end
 
   describe 'Validações' do
+    context 'Validação de apólice' do
+      it 'É inválido se não houver apólice associada' do
+        endosso = build(:endosso, apolice: nil, apolice_numero: nil)
+
+        expect(endosso).not_to be_valid
+        expect(endosso.errors[:endosso]).to include('é preciso informar uma apólice válida')
+      end
+    end
+
     context 'Validação de vigência' do
       it 'É inválido se fim_vigencia for anterior ao início da apólice' do
         apolice = create(:apolice, inicio_vigencia: Date.today)
