@@ -140,7 +140,9 @@ RSpec.describe Apolice, type: :model do
   end
 
   describe 'Associações' do
-    it { is_expected.to have_many(:endossos).with_foreign_key(:apolice_numero).order(id: :desc) }
+    it 'Deve se relacionar com nenhum, um ou vários endossos' do
+      is_expected.to have_many(:endossos).with_foreign_key(:apolice_numero).order(id: :desc)
+    end
   end
 
   describe 'Enum' do
