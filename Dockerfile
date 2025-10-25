@@ -6,6 +6,8 @@ WORKDIR /app
 
 COPY Gemfile Gemfile.lock .
 
+RUN bundle config set without 'development test'
+
 RUN bundle install
 
 COPY entrypoint.sh /usr/bin/
