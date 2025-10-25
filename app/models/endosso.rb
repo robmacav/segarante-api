@@ -29,12 +29,21 @@ class Endosso < ApplicationRecord
 
   validate :fim_vigencia_nao_antes_do_inicio_da_apolice
 
+  before_validation :apolice_deve_ser_valida
   before_validation :definir_tipo, on: :create
   before_validation :definir_data_emissao, :replicar_valores_apolice
   after_create :atualizar_valor_is_apolice, if: :importancia_segurada?
   after_create :cancelar_ultimo_endosso_valido, if: :endosso_cancelamento_id?
 
   private
+
+  def apolice_deve_ser_valida
+    if apolice.nil? || apolice_numero.blank?
+      errors.add(:endosso, "é preciso informar uma apólice válida")
+      throw(:abort)
+    end
+  end
+
 
   def definir_tipo
     is_mudou = importancia_segurada.present? && importancia_segurada != apolice.importancia_segurada
