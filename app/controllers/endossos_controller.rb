@@ -1,27 +1,25 @@
 class EndossosController < ApplicationController
-def create
-  @endosso = Endosso.new(endosso_params)
+  def create
+    @endosso = Endosso.new(endosso_params)
 
-  if @endosso.save
-    render json: @endosso.as_json(
-      only: [
-        :apolice_numero,
-        :data_emissao,
-        :inicio_vigencia,
-        :fim_vigencia,
-        :importancia_segurada,
-        :endosso_cancelamento_id,
-        :endosso_cancelador_id,
-        :tipo
-      ],
-      methods: [:tipo_descricao]
-    ), status: :created
-  else
-    render json: @endosso.errors, status: :unprocessable_entity
+    if @endosso.save
+      render json: @endosso.as_json(
+        only: [
+          :apolice_numero,
+          :data_emissao,
+          :inicio_vigencia,
+          :fim_vigencia,
+          :importancia_segurada,
+          :endosso_cancelamento_id,
+          :endosso_cancelador_id,
+          :tipo
+        ],
+        methods: [:tipo_descricao]
+      ), status: :created
+    else
+      render json: @endosso.errors, status: :unprocessable_entity
+    end
   end
-end
-
-
 
   private
     def endosso_params
