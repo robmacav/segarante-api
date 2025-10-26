@@ -1,0 +1,608 @@
+{
+	"info": {
+		"_postman_id": "bc613aec-ff4a-47ed-8e5e-b3de798d64f9",
+		"name": "SEGARANTE API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "37951080"
+	},
+	"item": [
+		{
+			"name": "Apolices",
+			"item": [
+				{
+					"name": "Criação de apólice",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();",
+									"",
+									"const apolice_numero = response.numero;",
+									"",
+									"pm.expect(apolice_numero).to.exist;",
+									"pm.expect(apolice_numero).to.be.a(\"number\");",
+									"",
+									"pm.collectionVariables.set(\"apolice_numero\", apolice_numero);",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let hoje = new Date();",
+									"let inicio = new Date(hoje);",
+									"let fim = new Date(hoje);",
+									"",
+									"inicio.setDate(hoje.getDate() + 1);",
+									"fim.setDate(inicio.getDate() + 365);",
+									"",
+									"pm.collectionVariables.set(\"apolice_inicio_vigencia\", inicio.toISOString().split('T')[0]);",
+									"pm.collectionVariables.set(\"apolice_fim_vigencia\", fim.toISOString().split('T')[0]);",
+									"pm.collectionVariables.set(\"apolice_importancia_segurada\", Math.floor(Math.random() * 100000 + 10000));",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"inicio_vigencia\": \"{{apolice_inicio_vigencia}}\",\n    \"fim_vigencia\": \"{{apolice_fim_vigencia}}\",\n    \"importancia_segurada\": \"{{apolice_importancia_segurada}}\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/apolices",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"apolices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listagem de apólices",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/apolices",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"apolices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Histórico de Modificações",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/apolices/:numero",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"apolices",
+								":numero"
+							],
+							"variable": [
+								{
+									"key": "numero",
+									"value": "{{apolice_numero}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Endosso",
+			"item": [
+				{
+					"name": "Aumentar IS",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const apolice_numero = pm.collectionVariables.get(\"apolice_numero\");",
+									"const base_url_api = pm.collectionVariables.get(\"base_url\");",
+									"",
+									"if (!apolice_numero) {",
+									"    console.error(\"Variável 'apolice_numero' não definida no ambiente.\");",
+									"} else {",
+									"    pm.sendRequest({",
+									"        url: `${base_url_api}/apolices/${apolice_numero}`,",
+									"        method: 'GET'",
+									"    }, (err, res) => {",
+									"        if (err) {",
+									"            console.error(\"Erro ao buscar apólice:\", err);",
+									"        } else if (res.code !== 200) {",
+									"            console.error(`Erro na resposta (${res.code}):`, res.text());",
+									"        } else {",
+									"            const body = res.json();",
+									"",
+									"            const apoliceImportancia = parseFloat(body.importancia_segurada) || 0;",
+									"            const acrescimo = Math.floor(Math.random() * 10000) + 1;",
+									"            const apoliceAtualizada = apoliceImportancia + acrescimo;",
+									"",
+									"            pm.collectionVariables.set(\"endosso_importancia_segurada\", apoliceAtualizada);",
+									"        }",
+									"    });",
+									"}",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"importancia_segurada\": \"{{endosso_importancia_segurada}}\",\n    \"apolice_numero\": \"{{apolice_numero}}\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/endossos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"endossos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reduzir IS",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const apolice_numero = pm.collectionVariables.get(\"apolice_numero\");",
+									"const base_url_api = pm.collectionVariables.get(\"base_url\");",
+									"",
+									"if (!apolice_numero) {",
+									"    console.error(\"Variável 'apolice_numero' não definida no ambiente.\");",
+									"} else {",
+									"    pm.sendRequest({",
+									"        url: `${base_url_api}/apolices/${apolice_numero}`,",
+									"        method: 'GET'",
+									"    }, (err, res) => {",
+									"        if (err) {",
+									"            console.error(\"Erro ao buscar apólice:\", err);",
+									"        } else if (res.code !== 200) {",
+									"            console.error(`Erro na resposta (${res.code}):`, res.text());",
+									"        } else {",
+									"            const body = res.json();",
+									"",
+									"            const apoliceImportancia = parseFloat(body.importancia_segurada) || 0;",
+									"            const reducao = Math.floor(Math.random() * 10000) + 1;",
+									"            const apoliceAtualizada = Math.max(apoliceImportancia - reducao, 0);",
+									"",
+									"            pm.collectionVariables.set(\"endosso_importancia_segurada\", apoliceAtualizada);",
+									"        }",
+									"    });",
+									"}",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"importancia_segurada\": \"{{endosso_importancia_segurada}}\",\n    \"apolice_numero\": \"{{apolice_numero}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/endossos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"endossos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Alterar fim da vigência",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const apolice_numero = pm.collectionVariables.get(\"apolice_numero\");",
+									"const base_url_api = pm.collectionVariables.get(\"base_url\");",
+									"",
+									"console.log(\"numero: \", apolice_numero);",
+									"console.log(\"url: \", base_url_api);",
+									"",
+									"if (!apolice_numero) {",
+									"    console.error(\"Variável 'apolice_numero' não definida no ambiente.\");",
+									"} else {",
+									"    pm.sendRequest({",
+									"        url: `${base_url_api}/apolices/${apolice_numero}`,",
+									"        method: 'GET'",
+									"    }, (err, res) => {",
+									"        if (err) {",
+									"            console.error(\"Erro ao buscar apólice:\", err);",
+									"        } else if (res.code !== 200) {",
+									"            console.error(`Erro na resposta (${res.code}):`, res.text());",
+									"        } else {",
+									"            const body = res.json();",
+									"",
+									"            const inicioStr = body.inicio_vigencia;",
+									"            if (!inicioStr) {",
+									"                console.error(\"Campo 'inicio_vigencia' não encontrado na resposta.\");",
+									"                return;",
+									"            }",
+									"",
+									"            const inicio = new Date(inicioStr);",
+									"",
+									"            if (isNaN(inicio.getTime())) {",
+									"                console.error(\"Data inválida em 'inicio_vigencia':\", inicioStr);",
+									"                return;",
+									"            }",
+									"",
+									"            const diasExtras = Math.floor(Math.random() * (365 - 30 + 1)) + 30;",
+									"",
+									"            const fim = new Date(inicio);",
+									"            fim.setDate(inicio.getDate() + diasExtras);",
+									"",
+									"            const fimFormatado = fim.toISOString().split('T')[0];",
+									"",
+									"            pm.collectionVariables.set(\"endosso_fim_vigencia\", fimFormatado);",
+									"        }",
+									"    });",
+									"}",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fim_vigencia\": \"{{endosso_fim_vigencia}}\",\n    \"apolice_numero\": \"{{apolice_numero}}\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/endossos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"endossos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Aumentar IS e alterar fim da vigência",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const apolice_numero = pm.collectionVariables.get(\"apolice_numero\");",
+									"const base_url_api = pm.collectionVariables.get(\"base_url\");",
+									"",
+									"if (!apolice_numero) {",
+									"    console.error(\"Variável 'apolice_numero' não definida no ambiente.\");",
+									"} else {",
+									"    pm.sendRequest({",
+									"        url: `${base_url_api}/apolices/${apolice_numero}`,",
+									"        method: 'GET'",
+									"    }, (err, res) => {",
+									"        if (err) {",
+									"            console.error(\"❌ Erro ao buscar apólice:\", err);",
+									"        } else if (res.code !== 200) {",
+									"            console.error(`Erro na resposta (${res.code}):`, res.text());",
+									"        } else {",
+									"            const body = res.json();",
+									"",
+									"            // vigencia",
+									"            const inicioStr = body.inicio_vigencia;",
+									"            const inicio = new Date(inicioStr);",
+									"            const diasExtras = Math.floor(Math.random() * (365 - 30 + 1)) + 30;",
+									"",
+									"            const fim = new Date(inicio);",
+									"            fim.setDate(inicio.getDate() + diasExtras);",
+									"",
+									"            const fimFormatado = fim.toISOString().split('T')[0];",
+									"",
+									"            // aumento_is",
+									"            const apoliceImportancia = parseFloat(body.importancia_segurada) || 0;",
+									"            const acrescimo = Math.floor(Math.random() * 10000) + 1;",
+									"            const apoliceAtualizada = apoliceImportancia + acrescimo;",
+									"",
+									"            pm.collectionVariables.set(\"endosso_importancia_segurada\", apoliceAtualizada);",
+									"            pm.collectionVariables.set(\"endosso_fim_vigencia\", fimFormatado);",
+									"        }",
+									"    });",
+									"}",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"importancia_segurada\": \"{{endosso_importancia_segurada}}\",\n    \"fim_vigencia\": \"{{endosso_fim_vigencia}}\",\n    \"apolice_numero\": \"{{apolice_numero}}\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/endossos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"endossos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reduzir IS e alterar fim da vigência",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const apolice_numero = pm.collectionVariables.get(\"apolice_numero\");",
+									"const base_url_api = pm.collectionVariables.get(\"base_url\");",
+									"",
+									"if (!apolice_numero) {",
+									"    console.error(\"Variável 'apolice_numero' não definida no ambiente.\");",
+									"} else {",
+									"    pm.sendRequest({",
+									"        url: `${base_url_api}/apolices/${apolice_numero}`,",
+									"        method: 'GET'",
+									"    }, (err, res) => {",
+									"        if (err) {",
+									"            console.error(\"Erro ao buscar apólice:\", err);",
+									"        } else if (res.code !== 200) {",
+									"            console.error(`⚠️ Erro na resposta (${res.code}):`, res.text());",
+									"        } else {",
+									"            const body = res.json();",
+									"",
+									"            // vigencia",
+									"            const inicioStr = body.inicio_vigencia;",
+									"            const inicio = new Date(inicioStr);",
+									"            const diasExtras = Math.floor(Math.random() * (365 - 30 + 1)) + 30;",
+									"",
+									"            const fim = new Date(inicio);",
+									"            fim.setDate(inicio.getDate() + diasExtras);",
+									"",
+									"            const fimFormatado = fim.toISOString().split('T')[0];",
+									"",
+									"            // aumento_is",
+									"            const apoliceImportancia = parseFloat(body.importancia_segurada) || 0;",
+									"            const reducao = Math.floor(Math.random() * 10000) + 1;",
+									"            const apoliceAtualizada = Math.max(apoliceImportancia - reducao, 0);",
+									"",
+									"            pm.collectionVariables.set(\"endosso_importancia_segurada\", apoliceAtualizada);",
+									"            pm.collectionVariables.set(\"endosso_fim_vigencia\", fimFormatado);",
+									"        }",
+									"    });",
+									"}",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"importancia_segurada\": \"{{endosso_importancia_segurada}}\",\n    \"fim_vigencia\": \"{{endosso_fim_vigencia}}\",\n    \"apolice_numero\": \"{{apolice_numero}}\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/endossos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"endossos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Gerar cancelamento",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"cancelamento\": \"true\",\n    \"apolice_numero\": \"{{apolice_numero}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/endossos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"endossos"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "default"
+		},
+		{
+			"key": "apolice_numero",
+			"value": ""
+		},
+		{
+			"key": "apolice_inicio_vigencia",
+			"value": ""
+		},
+		{
+			"key": "apolice_fim_vigencia",
+			"value": ""
+		},
+		{
+			"key": "apolice_importancia_segurada",
+			"value": ""
+		},
+		{
+			"key": "endosso_importancia_segurada",
+			"value": ""
+		},
+		{
+			"key": "endosso_fim_vigencia",
+			"value": ""
+		}
+	]
+}
