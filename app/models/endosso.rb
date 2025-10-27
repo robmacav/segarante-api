@@ -62,6 +62,8 @@ class Endosso < ApplicationRecord
       end
 
       self.endosso_cancelamento_id = ultimo_endosso_valido.id
+      
+      apolice.status = :baixa if apolice.fim_vigencia < Date.today
     elsif is_mudou && vigencia_mudou
       if importancia_segurada > self.apolice.importancia_segurada
         self.tipo = :aumento_is_alteracao_vigencia
